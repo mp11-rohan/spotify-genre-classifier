@@ -27,7 +27,13 @@ def get_user_liked_songs():
     items.extend(data['items'])
     return items
 
-"""
-TODO: check the last two functions return correct info
-      do the last function of level 3
-"""
+# Get the tracks of a specific playlist
+def get_tracks_from_playlist(list_id):
+    tracks = []
+    data = sp.playlist_items(playlist_id=list_id, limit=100)
+    while data['next'] != None:
+        tracks.extend(data['items'])
+        data = sp.next(data)
+
+    tracks.extend(data['items'])
+    return tracks
