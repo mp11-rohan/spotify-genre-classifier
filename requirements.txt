@@ -1,0 +1,6 @@
+spotipy
+pandas
+numpy
+streamlit
+python-dotenv
+requests
