@@ -48,7 +48,3 @@ def add_tracks_to_playlist(playlist_id, tracks_list):
     for i in range(0, len(tracks_list), 100):
         chunk = tracks_list[i:i+100]
         sp.playlist_add_items(playlist_id=playlist_id, items=chunk)
-
-songs_list = [track['track']['uri'] for track in get_user_liked_songs()[0:101]]
-id = create_destination_playlist('Test 1')
-add_tracks_to_playlist(id, songs_list)
