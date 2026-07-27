@@ -28,12 +28,27 @@ def get_user_liked_songs():
     return items
 
 # Get the tracks of a specific playlist
-def get_tracks_from_playlist(list_id):
+def get_tracks_from_playlist(playlist_id):
     tracks = []
-    data = sp.playlist_items(playlist_id=list_id, limit=100)
+    data = sp.playlist_items(playlist_id=playlist_id, limit=100)
     while data['next'] != None:
         tracks.extend(data['items'])
         data = sp.next(data)
 
     tracks.extend(data['items'])
     return tracks
+
+# Create destination playlist with given name
+def create_destination_playlist(playlist_name):
+    playlist_info = sp.current_user_playlist_create(name=playlist_name)
+    return playlist_info['id']
+
+# Add tracks to playlist through URI
+def add_tracks_to_playlist(playlist_id, tracks_list):
+    for i in range(0, len(tracks_list), 100):
+        chunk = tracks_list[i:i+100]
+        sp.playlist_add_items(playlist_id=playlist_id, items=chunk)
+
+songs_list = [track['track']['uri'] for track in get_user_liked_songs()[0:101]]
+id = create_destination_playlist('Test 1')
+add_tracks_to_playlist(id, songs_list)
