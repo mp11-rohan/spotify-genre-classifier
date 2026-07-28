@@ -26,6 +26,7 @@ def chunk_list(list_tracks_id):
 
     return track_features
 
-
-
-
+# Get Spotify ID from 'href' key in the dict
+def get_id_from_feature(track_feature):
+    href = track_feature['href'].split('/')
+    return href[-1]
