@@ -48,3 +48,9 @@ def add_tracks_to_playlist(playlist_id, tracks_list):
     for i in range(0, len(tracks_list), 100):
         chunk = tracks_list[i:i+100]
         sp.playlist_add_items(playlist_id=playlist_id, items=chunk)
+
+
+# Get song names of given playlist (purpose: genre building)
+songs = [track['item']['name'] for track in get_tracks_from_playlist("3ZRMgkmavJsv6EM9AYDBF3")]
+# print(songs)
+# print(len(songs))
