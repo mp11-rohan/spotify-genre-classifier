@@ -8,6 +8,6 @@ genres = {
             "energy" : [0.40, 0.85]
         },
 
-        "required" : 3
+        "required" : 4
     },
 }
