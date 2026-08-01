@@ -1,14 +1,39 @@
-import spotify_client as sc
+import spotify_client as spc
+import reccobeats_client as rcc
+import scoring as sc
 
 def run_pipeline(origin_playlist_id = None, destination_playlist_id = None, new_playlist_name = None, selected_genre = None):
 
-    # Get tracks from chose playlist
+    # Get tracks from chosen origin playlist
     if origin_playlist_id == "LIKED_SONGS":
-        origin_tracks = sc.get_user_liked_songs()
+        origin_tracks = [track['track']['id'] for track in sc.get_user_liked_songs()]
     else:
-        origin_tracks = sc.get_tracks_from_playlist(origin_playlist_id)
+        origin_tracks = [track['item']['id'] for track in sc.get_tracks_from_playlist(origin_playlist_id)]
 
+    # Get tracks from chose destination playlist
     if destination_playlist_id == None:
-        dest_tracks = {}
+        dest_tracks = set()
     else:
-        dest_tracks = sc.get_tracks_from_playlist(destination_playlist_id)
+        dest_tracks = set([track['item']['id'] for track in spc.get_tracks_from_playlist(destination_playlist_id)])
+
+    # Eliminate tracks that are already present in destination
+    new_tracks = [track for track in origin_tracks if track not in dest_tracks]
+
+    # Get feats for new songs
+    track_feats = rcc.get_feats_with_cache(new_tracks)
+
+    # Select passed songs for chosen genre
+    passed_tracks = [track_feat for track_feat in track_feats['features'] if sc.pass_track(track_feat, selected_genre)]
+
+    # Check if passed_tracks > 0
+    if len(passed_tracks) <= 0:
+        return "No matches"
+
+    # Add songs to dest_playlist, create it if needed
+    if destination_playlist_id == None:
+        destination_playlist_id = spc.create_destination_playlist(new_playlist_name)
+    passed_tracks_ids = [rcc.get_id_from_feat(track_feat=track_feat) for track_feat in passed_tracks]
+    passed_tracks_uris = [f"spotify:track:{id}" for id in passed_tracks_ids]
+    spc.add_tracks_to_playlist(destination_playlist_id, passed_tracks_uris)
+
+    return """"""
