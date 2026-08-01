@@ -50,6 +50,6 @@ def add_tracks_to_playlist(playlist_id, tracks_list):
         sp.playlist_add_items(playlist_id=playlist_id, items=chunk)
 
 # Get song names of given playlist (purpose: genre building)
-songs = [track['item']['name'] for track in get_tracks_from_playlist("3ZRMgkmavJsv6EM9AYDBF3")]
+# songs = [track['item']['name'] for track in get_tracks_from_playlist("3ZRMgkmavJsv6EM9AYDBF3")]
 # print(songs)
 # print(len(songs))
