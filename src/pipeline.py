@@ -18,7 +18,8 @@ def run_pipeline(origin_playlist_id = None, destination_playlist_id = None, new_
 
     # Eliminate tracks that are already present in destination
     new_tracks = [track for track in origin_tracks if track not in dest_tracks]
-
+    new_tracks = list(set(new_tracks))
+    
     # Get feats for new songs
     track_feats = rcc.get_feats_with_cache(new_tracks)
 
