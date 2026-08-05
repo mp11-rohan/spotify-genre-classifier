@@ -1,4 +1,4 @@
-from auth import sp as sp
+from src.auth import sp as sp
 
 # Get all playlists of user
 def get_user_playlists():

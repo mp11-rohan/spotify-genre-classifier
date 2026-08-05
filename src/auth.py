@@ -1,6 +1,6 @@
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
-import config
+from src import config
 
 scope = 'user-library-read playlist-read-private playlist-modify-public playlist-modify-private'
 # sp = user

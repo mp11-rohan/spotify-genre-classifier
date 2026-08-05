@@ -1,7 +1,7 @@
-import reccobeats_client as rc
-import genres as gr
+from src import reccobeats_client as rc
+from src import genres as gr
 import pandas as pd
-import spotify_client as sc
+from src import spotify_client as sc
 
 def pass_feature(feat_val, bounds):
     return feat_val >= bounds[0] and feat_val <= bounds[1]

@@ -1,7 +1,7 @@
 import requests
 import os
 import json
-import config
+from src import config
 
 # Fetch features by track_id
 def fetch_tracks_feats(list_tracks_id):
