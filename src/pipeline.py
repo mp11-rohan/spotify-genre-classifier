@@ -1,5 +1,6 @@
 from src import spotify_client as spc
 from src import reccobeats_client as rcc
+from src import genres as gr
 from src import scoring as sc
 
 def run_pipeline(origin_playlist_id = None, destination_playlist_id = None, new_playlist_name = None, selected_genre = None):
