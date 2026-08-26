@@ -10,6 +10,12 @@ app.geometry("700x650")
 app.title("Spotify Genre Classifier")
 app.resizable(False, False)
 app.grid_columnconfigure(0, weight=1)
+app.grid_rowconfigure(0, weight=1)
+app.grid_rowconfigure(1, weight=1)
+app.grid_rowconfigure(2, weight=1)
+app.grid_rowconfigure(3, weight=1)
+app.grid_rowconfigure(4, weight=1)
+
 
 #------------------------------------------Title Config-----------------------------------------------------------------------
 title_frame = ctk.CTkFrame(master=app, width=550, height=50, corner_radius=10, fg_color="#3682A2")
@@ -18,7 +24,7 @@ title_frame.grid(row=0, column=0, sticky="ew", pady=20, padx=20)
 title_label = ctk.CTkLabel(
     master=title_frame, 
     text="Spotify Genre Classifier", 
-    text_color="#FFFFFF", 
+    text_color="white", 
     font=("Cooper Black", 30, "bold")
 )
 title_label.place(rely=0.5, relx=0.5, anchor="center")
@@ -85,8 +91,29 @@ gr_opts = list(gr.genres.keys())
 gr_dropdown = ctk.CTkComboBox(master=gr_frame, values=gr_opts, state="readonly")
 gr_dropdown.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
 
-#------------------------------------------Create Config-----------------------------------------
+#------------------------------------------Classify Config---------------------------------------
+def on_classify():
+    source_name = source_dropdown.get()
+    source_id = source_opts[source_name]
 
+    dest_name = dest_dropdown.get()
+    dest_id = dest_opts[dest_name]
+
+    new_name = new_playlist_entry.get() if dest_name == "Create New" else None
+
+    gr_name = gr_dropdown.get()
+
+    print(f"Source Playlist Name: {source_name}\nSource Playlist ID: {source_id}\nDestination Playlist Name: {dest_name}\nDestination Playlist ID: {dest_id}\nNew Playlist Name: {new_name}\nGenre Selected: {gr_name}")
+gen_btn=ctk.CTkButton(
+    master=app,
+    width=300, 
+    height=40, 
+    text="Classify Playlist", 
+    font=("Arial Rounded MT Bold", 24, "bold"),
+    fg_color="#3682A2",
+    command=on_classify
+    )
+gen_btn.grid(row=4, column=0, columnspan=2)
 
 
 app.mainloop()
