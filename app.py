@@ -5,19 +5,22 @@ import customtkinter as ctk
 
 playists = {playlist['name']:playlist['id'] for playlist in spc.user_own_playlists()}
 
+#------------------------------------------App Config----------------------------------------------------------------------------
 app = ctk.CTk()
 app.geometry("700x650")
 app.title("Spotify Genre Classifier")
 app.resizable(False, False)
+app._set_appearance_mode("dark")
 app.grid_columnconfigure(0, weight=1)
 app.grid_rowconfigure(0, weight=1)
 app.grid_rowconfigure(1, weight=1)
 app.grid_rowconfigure(2, weight=1)
 app.grid_rowconfigure(3, weight=1)
 app.grid_rowconfigure(4, weight=1)
+app.grid_rowconfigure(5, weight=1)
 
+#------------------------------------------Title Config---------------------------------------------------------------------------
 
-#------------------------------------------Title Config-----------------------------------------------------------------------
 title_frame = ctk.CTkFrame(master=app, width=550, height=50, corner_radius=10, fg_color="#3682A2")
 title_frame.grid(row=0, column=0, sticky="ew", pady=20, padx=20)
 
@@ -29,8 +32,9 @@ title_label = ctk.CTkLabel(
 )
 title_label.place(rely=0.5, relx=0.5, anchor="center")
 
-#------------------------------------------Source Config------------------------------------------------------------------------
-source_frame = ctk.CTkFrame(master=app, width=650, height=60)
+#------------------------------------------Source Config--------------------------------------------------------------------------------
+
+source_frame = ctk.CTkFrame(master=app, width=650, height=60, fg_color="#242424")
 source_frame.grid(row=1, column=0, sticky="ew", pady=20, padx=50)
 source_frame.grid_columnconfigure(1, weight=1)
 source_frame.grid_rowconfigure(0, weight=1)
@@ -49,8 +53,9 @@ source_opts.update(playists)
 source_dropdown = ctk.CTkComboBox(master=source_frame, values=list(source_opts.keys()), state="readonly")
 source_dropdown.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
 
-#------------------------------------------Destination Config------------------------------------------------------------------
-dest_frame = ctk.CTkFrame(master=app, width=650, height=80)
+#------------------------------------------Destination Config-------------------------------------------------------------------------
+
+dest_frame = ctk.CTkFrame(master=app, width=650, height=80, fg_color="#242424")
 dest_frame.grid(row=2, column=0, sticky="ew", pady=20, padx=50)
 dest_frame.grid_columnconfigure(1, weight=1)
 dest_frame.grid_rowconfigure(0, weight=1)
@@ -74,8 +79,10 @@ dest_opts = {"Create New" : None}
 dest_opts.update(playists)
 dest_dropdown = ctk.CTkComboBox(master=dest_frame, values=list(dest_opts.keys()), command=on_selection_change, state="readonly")
 dest_dropdown.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
+
 #------------------------------------------Genre Config-----------------------------------------------------------------------
-gr_frame = ctk.CTkFrame(master=app, width=650, height=60)
+
+gr_frame = ctk.CTkFrame(master=app, width=650, height=60, fg_color="#242424")
 gr_frame.grid(row=3, column=0, sticky="ew", pady=20, padx=50)
 gr_frame.grid_columnconfigure(1, weight=1)
 gr_frame.grid_rowconfigure(0, weight=1)
@@ -85,25 +92,20 @@ gr_label=ctk.CTkLabel(
     text="Choose a mood:",
     text_color="white",
     font=("Arial Rounded MT Bold", 18, "bold")
-    )
+)
 gr_label.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+
 gr_opts = list(gr.genres.keys())
 gr_dropdown = ctk.CTkComboBox(master=gr_frame, values=gr_opts, state="readonly")
 gr_dropdown.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
 
-#------------------------------------------Classify Config---------------------------------------
+#------------------------------------------Classify Config------------------------------------------------------------------------
+
 def on_classify():
-    source_name = source_dropdown.get()
-    source_id = source_opts[source_name]
+    prog_bar.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+    prog_label.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
+    prog_bar.start()
 
-    dest_name = dest_dropdown.get()
-    dest_id = dest_opts[dest_name]
-
-    new_name = new_playlist_entry.get() if dest_name == "Create New" else None
-
-    gr_name = gr_dropdown.get()
-
-    print(f"Source Playlist Name: {source_name}\nSource Playlist ID: {source_id}\nDestination Playlist Name: {dest_name}\nDestination Playlist ID: {dest_id}\nNew Playlist Name: {new_name}\nGenre Selected: {gr_name}")
 gen_btn=ctk.CTkButton(
     master=app,
     width=300, 
@@ -112,8 +114,26 @@ gen_btn=ctk.CTkButton(
     font=("Arial Rounded MT Bold", 24, "bold"),
     fg_color="#3682A2",
     command=on_classify
-    )
+)
 gen_btn.grid(row=4, column=0, columnspan=2)
+
+#------------------------------------------Proggress Bar Config----------------------------------------------------------------------
+
+prog_frame = ctk.CTkFrame(master=app, width=650, height=60, fg_color="#242424")
+prog_frame.grid(row=5, column=0, sticky="ew", pady=20, padx=50)
+prog_frame.grid_propagate(False)
+prog_frame.grid_columnconfigure(0, weight=1)
+prog_frame.grid_rowconfigure(0, weight=1)
+
+prog_bar = ctk.CTkProgressBar(master=prog_frame, mode="indeterminate")
+
+prog_label = ctk.CTkLabel(
+    master=prog_frame, 
+    text="0%",
+    text_color="white",
+    font=("Arial Rounded MT Bold", 18, "bold")
+)
+
 
 
 app.mainloop()
