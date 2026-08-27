@@ -35,3 +35,43 @@ At first this seemed a total blocker and I was about to give up, but after doing
 - **pandas / numpy** — data analysis during genre threshold tuning.
 - **python-dotenv**.
 - **PyInstaller**.
+
+
+## Setup
+
+### For most users
+1. Go to the [Releases](<yet to build>) page and download the latest `SpotifyGenreClassifier.exe`.
+2. Double-click to run it.
+3. A browser window will open — log in with your Spotify account and grant access.
+4. That's it — the app is ready to use.
+
+### For developers (running from source)
+1. Clone the repo:
+```bash
+   git clone https://github.com/mp11-rohan/spotify-genre-classifier.git
+   cd spotify-genre-classifier
+```
+
+2. Create and activate a virtual environment:
+```bash
+   python -m venv venv
+   venv\Scripts\activate      # Windows
+   source venv/bin/activate   # macOS/Linux
+```
+
+3. Install dependencies:
+```bash
+   pip install -r requirements.txt
+```
+
+4. Register your own Spotify Developer app at [developer.spotify.com](https://developer.spotify.com/dashboard), and set the redirect URI to: http://127.0.0.1:8888/callback.
+
+5. Create a `.env` file in the project root:
+   SPOTIFY_CLIENT_ID = your_client_id
+   SPOTIFY_CLIENT_SECRET = your_client_secret
+   SPOTIFY_REDIRECT_URI = http://127.0.0.1:8888/callback.
+
+6. Run the app:
+```bash
+   python app.py
+```
