@@ -1,6 +1,6 @@
 spotipy
 pandas
 numpy
-streamlit
+customtkinter
 python-dotenv
 requests
