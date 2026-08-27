@@ -2,8 +2,63 @@ from src import pipeline as pipe
 from src import spotify_client as spc
 from src import genres as gr
 import customtkinter as ctk
+import threading
+import webbrowser
 
 playists = {playlist['name']:playlist['id'] for playlist in spc.user_own_playlists()}
+
+#------------------------------------------Functions----------------------------------------------------------------------------------
+
+def run_pipeline_background(source_id, dest_id, new_playlist_name, gr_dict):
+    result = pipe.run_pipeline(
+        origin_playlist_id=source_id,
+        destination_playlist_id= dest_id,
+        new_playlist_name=new_playlist_name,
+        selected_genre=gr_dict
+    )
+
+    app.after(0, lambda: after_wait(result))
+
+def on_classify():
+    prog_bar.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
+
+    result_btn.grid_forget()
+    result_label.grid_forget()
+
+    prog_bar.start()
+
+    gen_btn.configure(state="disabled")
+
+    source_name = source_dropdown.get()
+    source_id = source_opts[source_name]
+    dest_name = dest_dropdown.get()
+    dest_id = dest_opts[dest_name]
+    new_playlist_name = new_playlist_entry.get() if dest_name == "Create New" else None
+    gr_name = gr_dropdown.get()
+    gr_dict = gr.genres[gr_name]
+
+    thread = threading.Thread(target=run_pipeline_background, args=(source_id, dest_id, new_playlist_name, gr_dict))
+    thread.start()
+
+def on_selection_change(selected_name):
+    if selected_name == "Create New":
+        new_playlist_entry.grid(row=1, column=0,sticky="ew", columnspan=2, padx=10, pady=10)
+    else:
+        new_playlist_entry.grid_forget()
+
+def after_wait(result):
+    prog_bar.grid_forget()
+
+    gen_btn.configure(state="normal")
+
+    if(result['added_count'] == 0):
+        result_label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
+        result_label.configure(text="No matching songs found.")
+    else:
+        result_label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
+        result_label.configure(text=f"Added {result['added_count']} song(s) to the playlist!")
+        result_btn.grid(row=1, column=0, padx=10, pady=10)
+        result_btn.configure(command=lambda: webbrowser.open(result['playlist_url']))
 
 #------------------------------------------App Config----------------------------------------------------------------------------
 app = ctk.CTk()
@@ -17,7 +72,7 @@ app.grid_rowconfigure(1, weight=1)
 app.grid_rowconfigure(2, weight=1)
 app.grid_rowconfigure(3, weight=1)
 app.grid_rowconfigure(4, weight=1)
-app.grid_rowconfigure(5, weight=1)
+app.grid_rowconfigure(5, weight=1) 
 
 #------------------------------------------Title Config---------------------------------------------------------------------------
 
@@ -68,11 +123,6 @@ dest_label = ctk.CTkLabel(
 )
 dest_label.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
 
-def on_selection_change(selected_name):
-    if selected_name == "Create New":
-        new_playlist_entry.grid(row=1, column=0,sticky="ew", columnspan=2, padx=10, pady=10)
-    else:
-        new_playlist_entry.grid_forget()
 new_playlist_entry = ctk.CTkEntry(master=dest_frame, placeholder_text="New playlist name")
 
 dest_opts = {"Create New" : None}
@@ -101,39 +151,43 @@ gr_dropdown.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
 
 #------------------------------------------Classify Config------------------------------------------------------------------------
 
-def on_classify():
-    prog_bar.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
-    prog_label.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
-    prog_bar.start()
-
 gen_btn=ctk.CTkButton(
     master=app,
     width=300, 
     height=40, 
     text="Classify Playlist", 
+    text_color="white",
     font=("Arial Rounded MT Bold", 24, "bold"),
     fg_color="#3682A2",
     command=on_classify
 )
 gen_btn.grid(row=4, column=0, columnspan=2)
 
-#------------------------------------------Proggress Bar Config----------------------------------------------------------------------
+#------------------------------------------Result Config--------------------------------------------------------------------------------
 
-prog_frame = ctk.CTkFrame(master=app, width=650, height=60, fg_color="#242424")
-prog_frame.grid(row=5, column=0, sticky="ew", pady=20, padx=50)
-prog_frame.grid_propagate(False)
-prog_frame.grid_columnconfigure(0, weight=1)
-prog_frame.grid_rowconfigure(0, weight=1)
+result_frame = ctk.CTkFrame(master=app, width=650, height=100, fg_color="#242424")
+result_frame.grid(row=5, column=0, sticky="ew", pady=20, padx=50)
+result_frame.grid_propagate(False)
+result_frame.grid_columnconfigure(0, weight=1)
 
-prog_bar = ctk.CTkProgressBar(master=prog_frame, mode="indeterminate")
+prog_bar = ctk.CTkProgressBar(master=result_frame, mode="indeterminate")
 
-prog_label = ctk.CTkLabel(
-    master=prog_frame, 
-    text="0%",
+result_btn = ctk.CTkButton(
+    master=result_frame, 
+    width=150,
+    text="Open Playlist",
+    text_color="white",
+    font=("Arial Rounded MT Bold", 18, "bold"),
+    fg_color="#3682A2",
+    command=None
+)
+
+result_label=ctk.CTkLabel(
+    master=result_frame,
+    text="",
     text_color="white",
     font=("Arial Rounded MT Bold", 18, "bold")
 )
-
 
 
 app.mainloop()
