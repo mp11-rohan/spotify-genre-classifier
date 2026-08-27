@@ -5,7 +5,7 @@ import customtkinter as ctk
 import threading
 import webbrowser
 
-playists = {playlist['name']:playlist['id'] for playlist in spc.user_own_playlists()}
+playlists = {playlist['name']:playlist['id'] for playlist in spc.user_own_playlists()}
 
 #------------------------------------------Functions----------------------------------------------------------------------------------
 
@@ -28,6 +28,9 @@ def on_classify():
     prog_bar.start()
 
     gen_btn.configure(state="disabled")
+    source_dropdown.configure(state="disabled")
+    dest_dropdown.configure(state="disabled")
+    gr_dropdown.configure(state="disabled")
 
     source_name = source_dropdown.get()
     source_id = source_opts[source_name]
@@ -37,7 +40,7 @@ def on_classify():
     gr_name = gr_dropdown.get()
     gr_dict = gr.genres[gr_name]
 
-    thread = threading.Thread(target=run_pipeline_background, args=(source_id, dest_id, new_playlist_name, gr_dict))
+    thread = threading.Thread(target=run_pipeline_background, args=(source_id, dest_id, new_playlist_name, gr_dict), daemon=True)
     thread.start()
 
 def on_selection_change(selected_name):
@@ -50,6 +53,9 @@ def after_wait(result):
     prog_bar.grid_forget()
 
     gen_btn.configure(state="normal")
+    source_dropdown.configure(state="readonly")
+    dest_dropdown.configure(state="readonly")
+    gr_dropdown.configure(state="readonly")
 
     if(result['added_count'] == 0):
         result_label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
@@ -61,6 +67,7 @@ def after_wait(result):
         result_btn.configure(command=lambda: webbrowser.open(result['playlist_url']))
 
 #------------------------------------------App Config----------------------------------------------------------------------------
+
 app = ctk.CTk()
 app.geometry("700x650")
 app.title("Spotify Genre Classifier")
@@ -103,7 +110,7 @@ source_label = ctk.CTkLabel(
 source_label.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
 
 source_opts = {"Liked Songs" : "LIKED_SONGS"}
-source_opts.update(playists)
+source_opts.update(playlists)
 # Set "values" to list(source_opts.keys())
 source_dropdown = ctk.CTkComboBox(master=source_frame, values=list(source_opts.keys()), state="readonly")
 source_dropdown.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
@@ -126,7 +133,7 @@ dest_label.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
 new_playlist_entry = ctk.CTkEntry(master=dest_frame, placeholder_text="New playlist name")
 
 dest_opts = {"Create New" : None}
-dest_opts.update(playists)
+dest_opts.update(playlists)
 dest_dropdown = ctk.CTkComboBox(master=dest_frame, values=list(dest_opts.keys()), command=on_selection_change, state="readonly")
 dest_dropdown.grid(row=0, column=1, sticky="ew", padx=10, pady=10)
 
