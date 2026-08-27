@@ -75,3 +75,9 @@ At first this seemed a total blocker and I was about to give up, but after doing
 ```bash
    python app.py
 ```
+
+## Known Limitations
+
+- **ReccoBeats coverage gaps** — not every track has audio features data available, some tracks are silently skipped (the app reports how many were excluded).
+- **Genre thresholds are a first pass** — currently hand-tuned; expect imperfect classification on edge-case tracks.
+- **Only one genre is fully built** (Hip Hop & Rap) — more genres are planned.
