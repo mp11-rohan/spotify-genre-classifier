@@ -19,17 +19,18 @@ def run_pipeline(origin_playlist_id = None, destination_playlist_id = None, new_
 
     # Eliminate tracks that are already present in destination
     new_tracks = [track for track in origin_tracks if track not in dest_tracks]
+    new_tracks = [track for track in new_tracks if track != None]
     new_tracks = list(set(new_tracks))
     
     # Get feats for new songs
     track_feats = rcc.get_feats_with_cache(new_tracks)
-
+    len_missing_tracks = len(track_feats['missing'])
     # Select passed songs for chosen genre
     passed_tracks = [track_feat for track_feat in track_feats['features'] if sc.pass_track(track_feat, selected_genre)]
 
     # Check if passed_tracks > 0
     if len(passed_tracks) <= 0:
-        return {"playlist_url": None, "added_count": 0}
+        return {"playlist_url": None, "added_count": 0, "missing": len_missing_tracks}
 
     # Add songs to dest_playlist, create it if needed
     if destination_playlist_id == None:
@@ -40,4 +41,4 @@ def run_pipeline(origin_playlist_id = None, destination_playlist_id = None, new_
 
     # Return playlist link + count of added tracks
     playlist_uri = f"https://open.spotify.com/playlist/{destination_playlist_id}"
-    return {"playlist_url": playlist_uri, "added_count": len(passed_tracks)}
+    return {"playlist_url": playlist_uri, "added_count": len(passed_tracks), "missing": len_missing_tracks}

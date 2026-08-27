@@ -4,3 +4,4 @@ numpy
 customtkinter
 python-dotenv
 requests
+pyinstaller

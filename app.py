@@ -9,17 +9,40 @@ playlists = {playlist['name']:playlist['id'] for playlist in spc.user_own_playli
 
 #------------------------------------------Functions----------------------------------------------------------------------------------
 
-def run_pipeline_background(source_id, dest_id, new_playlist_name, gr_dict):
-    result = pipe.run_pipeline(
-        origin_playlist_id=source_id,
-        destination_playlist_id= dest_id,
-        new_playlist_name=new_playlist_name,
-        selected_genre=gr_dict
-    )
+def on_error(e):
+    prog_bar.grid_forget()
+    
+    gen_btn.configure(state="normal")
+    source_dropdown.configure(state="readonly")
+    dest_dropdown.configure(state="readonly")
+    gr_dropdown.configure(state="readonly")
 
-    app.after(0, lambda: after_wait(result))
+    result_label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
+    result_label.configure(text="Something went wrong.")
+
+
+def run_pipeline_background(source_id, dest_id, new_playlist_name, gr_dict):
+    try:
+        result = pipe.run_pipeline(
+            origin_playlist_id=source_id,
+            destination_playlist_id= dest_id,
+            new_playlist_name=new_playlist_name,
+            selected_genre=gr_dict
+        )
+        app.after(0, lambda: after_wait(result))
+    except Exception as e:
+        app.after(0, lambda: on_error(e))
 
 def on_classify():
+    source_name = source_dropdown.get()
+    dest_name = dest_dropdown.get()
+    gr_name = gr_dropdown.get()
+
+    if source_name not in source_opts or dest_name not in dest_opts or gr_name not in gr.genres:
+        result_label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
+        result_label.configure(text="Please select a source, destination, and mood.")
+        return
+
     prog_bar.grid(row=0, column=0, sticky="ew", padx=10, pady=10)
 
     result_btn.grid_forget()
@@ -32,12 +55,10 @@ def on_classify():
     dest_dropdown.configure(state="disabled")
     gr_dropdown.configure(state="disabled")
 
-    source_name = source_dropdown.get()
     source_id = source_opts[source_name]
-    dest_name = dest_dropdown.get()
     dest_id = dest_opts[dest_name]
     new_playlist_name = new_playlist_entry.get() if dest_name == "Create New" else None
-    gr_name = gr_dropdown.get()
+    new_playlist_name = f"{gr_name} Playlist" if new_playlist_name == "" and dest_name == "Create New" else new_playlist_name
     gr_dict = gr.genres[gr_name]
 
     thread = threading.Thread(target=run_pipeline_background, args=(source_id, dest_id, new_playlist_name, gr_dict), daemon=True)
@@ -59,10 +80,10 @@ def after_wait(result):
 
     if(result['added_count'] == 0):
         result_label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
-        result_label.configure(text="No matching songs found.")
+        result_label.configure(text=f"No matching songs found.\n{result['missing']} songs were not evaluated.")
     else:
         result_label.grid(row=0, column=0, columnspan=2, sticky="ew", padx=10, pady=5)
-        result_label.configure(text=f"Added {result['added_count']} song(s) to the playlist!")
+        result_label.configure(text=f"Added {result['added_count']} song(s) to the playlist!\n{result['missing']} songs were not evaluated.")
         result_btn.grid(row=1, column=0, padx=10, pady=10)
         result_btn.configure(command=lambda: webbrowser.open(result['playlist_url']))
 
@@ -198,6 +219,3 @@ result_label=ctk.CTkLabel(
 
 
 app.mainloop()
-
-""" TO CHANGE:
- - font of labels """
