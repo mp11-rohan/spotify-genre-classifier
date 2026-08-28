@@ -21,9 +21,12 @@ def chunk_list(list_tracks_id):
     track_feats = []
     for i in range(0, len(list_tracks_id), 40):
         batch = list_tracks_id[i:i+40]
-        response = fetch_tracks_feats(batch)
-        track_feats.extend(response['content'])
-
+        try:
+            response = fetch_tracks_feats(batch)
+            track_feats.extend(response['content'])
+        except Exception:
+            continue
+        
     return track_feats
 
 # Get Spotify ID from 'href' key in the dict
@@ -50,7 +53,10 @@ def get_feats_with_cache(track_ids):
     missing_ids = [track for track in track_ids if track not in cache]
 
     # Fetch missing features
-    missing_feats = chunk_list(missing_ids)
+    if(missing_ids != 0):
+        missing_feats = chunk_list(missing_ids)
+    else:
+        missing_feats = []
 
     # Add missing features to cache keyed with ID
     for feat in missing_feats:

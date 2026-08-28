@@ -31,7 +31,7 @@ def run_pipeline_background(source_id, dest_id, new_playlist_name, gr_dict):
         )
         app.after(0, lambda: after_wait(result))
     except Exception as e:
-        app.after(0, lambda: on_error(e))
+        app.after(0, lambda e=e: on_error(e))
 
 def on_classify():
     source_name = source_dropdown.get()
