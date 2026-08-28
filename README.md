@@ -40,7 +40,7 @@ At first this seemed a total blocker and I was about to give up, but after doing
 ## Setup
 
 ### For most users
-1. Download the latest `SpotifyGenreClassifier.exe` (https://github.com/mp11-rohan/spotify-genre-classifier/releases/download/v0.1.0/SpotifyGenreClassifier.exe).
+1. Download the latest `SpotifyGenreClassifier.exe` (https://github.com/mp11-rohan/spotify-genre-classifier/releases/download/v0.1.1/SpotifyGenreClassiefier.exe).
 2. Double-click to run it.
 3. A browser window will open — log in with your Spotify account and grant access.
 4. That's it — the app is ready to use.
