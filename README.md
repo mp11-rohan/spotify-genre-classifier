@@ -30,7 +30,7 @@ At first this seemed a total blocker and I was about to give up, but after doing
 
 - **Python 3.14**.
 - **spotipy** — Spotify Web API client (OAuth, playlist reads/writes).
-- **ReccoBeats API** — audio feature data.
+- **ReccoBeats API** — audio features data.
 - **CustomTkinter**.
 - **pandas / numpy** — data analysis during genre threshold tuning.
 - **python-dotenv**.
