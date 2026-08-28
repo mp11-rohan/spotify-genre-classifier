@@ -26,7 +26,7 @@ Spotify deprecated its own `audio-features` and `audio-analysis` endpoints for a
 
 At first this seemed a total blocker and I was about to give up, but after doing some late night research, many forums mentioned a service that claimed to offer the exact endpoints that Spotify had depracated. This service is **ReccoBeats**, a third-party service, that supplies the audio features (danceability, energy, acousticness, and more) that power the genre scoring.
 
-## Requirements
+## Tech Stack
 
 - **Python 3.14**.
 - **spotipy** — Spotify Web API client (OAuth, playlist reads/writes).
